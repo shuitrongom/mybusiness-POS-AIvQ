@@ -1,0 +1,28 @@
+{
+  "name": "puntonube-print-agent",
+  "version": "1.0.0",
+  "description": "Agente de impresion local 'PuntoNube Print' (ESC/POS, 127.0.0.1:9100, impresion RAW a impresora termica POS-80 por USB en Windows).",
+  "type": "commonjs",
+  "bin": {
+    "puntonube-print": "src/server.js"
+  },
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test",
+    "build:exe": "pkg . --targets node22-win-x64 --output dist/puntonube-print.exe --fallback-to-source"
+  },
+  "pkg": {
+    "scripts": "src/**/*.js",
+    "assets": [
+      "config.json",
+      "src/raw-print-worker.ps1"
+    ]
+  },
+  "devDependencies": {
+    "@yao-pkg/pkg": "^6.6.0"
+  },
+  "author": "PuntoNube POS",
+  "license": "UNLICENSED",
+  "private": true
+}

@@ -1,0 +1,46 @@
+package com.mybusinesssilva.inventory.domain.port.out;
+
+import com.mybusinesssilva.inventory.domain.model.InventoryMovement;
+import com.mybusinesssilva.inventory.domain.model.StockLevel;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Puerto de salida para la persistencia de inventario (schema del tenant).
+ */
+public interface InventoryRepository {
+
+    Optional<StockLevel> findStock(long productId, long branchId);
+
+    /**
+     * Ajusta la existencia de forma atómica y devuelve la cantidad resultante.
+     * Crea el registro de stock si no existe.
+     *
+     * @param delta cantidad a sumar (puede ser negativa)
+     */
+    BigDecimal adjustQuantity(long productId, long branchId, BigDecimal delta);
+
+    /**
+     * Descuenta {@code qty} de la existencia de forma atómica y condicionada: solo
+     * si la
+     * existencia actual es mayor o igual a {@code qty}. Devuelve la cantidad
+     * resultante, o
+     * {@link Optional#empty()} si no había suficiente (o no existía el registro de
+     * stock),
+     * sin modificar nada en ese caso.
+     *
+     * @param qty cantidad positiva a descontar
+     */
+    Optional<BigDecimal> adjustQuantityIfEnough(long productId, long branchId, BigDecimal qty);
+
+    void setMinQuantity(long productId, long branchId, BigDecimal minQuantity);
+
+    void recordMovement(InventoryMovement movement);
+
+    List<InventoryMovement> kardex(long productId, Long branchId, LocalDate from, LocalDate to);
+
+    /** Existencias que están en o por debajo de su stock mínimo (alertas). */
+    List<StockLevel> findBelowMinimum();
+}
